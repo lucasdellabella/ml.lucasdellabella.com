@@ -13,21 +13,7 @@ export default function Home({ posts }) {
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-lavender sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             Latest
           </h1>
-          <p className="text-lg leading-7 text-text">
-            {siteMetadata.description} RSS feed available{' '}
-            <a href="/feed.xml" className="font-bold text-green hover:text-teal">
-              here.
-            </a>{' '}
-            Shorter posts written on{' '}
-            <a
-              rel="me"
-              href="https://fosstodon.org/@markpitblado"
-              className="font-bold text-green hover:text-teal"
-            >
-              Mastodon
-            </a>
-            .
-          </p>
+          <p className="text-lg leading-7 text-text">{siteMetadata.description}</p>
         </div>
         <ul className="divide-y divide-overlay1">
           {!posts.length && 'No posts found.'}

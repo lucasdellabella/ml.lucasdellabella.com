@@ -14,13 +14,13 @@ const Header = () => {
           <div className="flex items-center justify-between">
             <div className="mr-3">
               <div className="mr-3 ">
-                <Image
+                {/* <Image
                   className="rounded-xl"
                   width={50}
                   height={50}
                   alt="cartoon profile picture"
                   src={siteMetadata.siteLogo}
-                />
+                /> */}
               </div>
             </div>
             {typeof siteMetadata.headerTitle === 'string' ? (

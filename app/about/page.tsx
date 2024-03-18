@@ -19,13 +19,40 @@ export default function Page() {
           </h1>
         </div>
         <div className="text-text prose max-w-none pb-8 pt-8 dark:prose-invert xl:col-span-2">
-          Hi, I'm Mark! Thanks for stopping by my site. Here you will find a little bit about me,
-          some posts that I have written, and links to other websites or services that I have a
-          presence on. If you with to get in touch, please use the email logo in the footer, and
-          I'll respond as soon as I can. I grew up loving to tinker with things, and never really
-          stopped. If I were to describe what I do, I would summarize it as "using data to help
-          solve problems for the public good". In my free time I love to read, and explore new and
-          emerging open-source software.
+          <div>
+            Hey! I'm Lucas - an ex-YC founder and bedroom hacker originally from the east coast.
+            This is my subdomain where I'm building my ML chops top-down, project by project.{' '}
+          </div>
+          <div className="flex justify-center my-5">
+            <div className="w-1/2 border-t border-gray-300 opacity-40" />
+          </div>
+          <div>
+            <p>I've previously worked on:</p>
+            <ul>
+              <li>
+                <a href="https://www.untetherlabs.com/">Untether Labs</a> - A YC backed startup
+                working on increasing the capacity of the US Healthcare system through better
+                scheduling tools.
+              </li>
+              <li>
+                <a href="https://www.safegraph.com/">Safegraph</a>'s Data Marketplace team - Helping
+                customers find the needle in the haystack of Safegraph's data.
+              </li>
+              <li>
+                <a href="https://www.yelp.com">Yelp</a>'s 'Connect' product - A tool to help
+                restaurant owners market to locals inside Yelp via photo & video.
+              </li>
+            </ul>
+          </div>
+          <div className="flex justify-center my-5">
+            <div className="w-1/2 border-t border-gray-300 opacity-40" />
+          </div>
+          <p>
+            Find me on <a href="https://github.com/lucasdellabella">GitHub</a>, 
+            <a href="https://www.twitter.com/FiveEels">Twitter</a>, 
+            <a href="https://www.youtube.com/channel/UCRWhLAnoDR7H-bK874mf_dA">YouTube (1)</a>,{' '}
+            <a href="https://www.youtube.com/c/hganghiskhan">YouTube (2)</a>.
+          </p>
         </div>
         <Link href="/about/this-site">
           <button className="rounded-md bg-green px-3 py-2 text-sm font-semibold text-base shadow-sm hover:bg-blue">
@@ -36,7 +63,7 @@ export default function Page() {
       </div>
       <div className="pt-10">
         <GitHubCalendar
-          username="mark-pitblado"
+          username="lucasdellabella"
           hideColorLegend={true}
           hideMonthLabels={true}
           hideTotalCount={true}

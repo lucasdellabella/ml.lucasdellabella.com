@@ -48,8 +48,8 @@ export default function Page() {
             <div className="w-1/2 border-t border-gray-300 opacity-40" />
           </div>
           <p>
-            Find me on <a href="https://github.com/lucasdellabella">GitHub</a>, 
-            <a href="https://www.twitter.com/FiveEels">Twitter</a>, 
+            Find me on <a href="https://github.com/lucasdellabella">GitHub</a>, {' '}
+            <a href="https://www.twitter.com/FiveEels">Twitter</a>, {' '}
             <a href="https://www.youtube.com/channel/UCRWhLAnoDR7H-bK874mf_dA">YouTube (1)</a>,{' '}
             <a href="https://www.youtube.com/c/hganghiskhan">YouTube (2)</a>.
           </p>

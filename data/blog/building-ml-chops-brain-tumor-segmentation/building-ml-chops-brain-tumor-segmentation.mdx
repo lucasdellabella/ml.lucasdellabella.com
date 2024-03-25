@@ -63,12 +63,22 @@ tags: ['image-segmentation', 'journal-entry', 'healthcare']
     6. Deploy model
   ```
 
-## Show off widget that executes my cloud model
-<BrainTumorSegmentationV1Widget />
+## Try it out!
+<BrainTumorSegmentationV1Widget imagePaths={[
+  '/static/images/brain-tumor-segmentation/118_jpg.rf.886b20780bd9ce055e4dd7cd9cbbd19c.jpg',
+  '/static/images/brain-tumor-segmentation/128_jpg.rf.ae9c1ccd37266ebb6f9e304dbc072d29.jpg',
+  '/static/images/brain-tumor-segmentation/138_jpg.rf.afc1207a05fc7a203831810574167b24.jpg',
+  '/static/images/brain-tumor-segmentation/198_jpg.rf.1d0e3d7955a67ebee65c35d4ea24461a.jpg',
+  '/static/images/brain-tumor-segmentation/238_jpg.rf.a741fa7f4ccab0fc7ee1b1ffd26efd42.jpg',
+  '/static/images/brain-tumor-segmentation/258_jpg.rf.01a1616a54e1e5f4bb8b2154a88eeda9.jpg',
+  '/static/images/brain-tumor-segmentation/1018_jpg.rf.5c6fcb4480745ff7c60c7305781913ab.jpg',
+  '/static/images/brain-tumor-segmentation/1048_jpg.rf.b7dc057c1351162a7e6f1ded8d24fcd7.jpg',
+  '/static/images/brain-tumor-segmentation/1308_jpg.rf.5dfa6eaf7fbd7f25726601b80ad3e924.jpg',
+  '/static/images/brain-tumor-segmentation/1328_jpg.rf.c3f91c42c82b45c4a1904530fb687bbf.jpg',
+]}/>
   ```languages: text
   ### Widget spec
   - Single button "Go"
-    - Picks a random image file from the validation set
     - Makes a request to replicate API
     - Displays the image w/ label overlaid on the left, w/ ground truth on the right flashing to indicate progress
     - Displays a progress bar hardcoded to progress at a rate of 1 compl. per 65s

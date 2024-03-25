@@ -11,7 +11,8 @@ import PostSimple from '@/layouts/PostSimple'
 import PostLayout from '@/layouts/PostLayout'
 import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
-import siteMetadata from '@/data/siteMetadata'
+import siteMetadata from 'data/siteMetadata'
+import ClientContent from './ClientContent'
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -124,6 +125,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
       />
       <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
         <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
+        {/* <ClientContent /> */}
       </Layout>
     </>
   )

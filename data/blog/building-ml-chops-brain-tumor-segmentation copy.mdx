@@ -1,0 +1,102 @@
+---
+title: 'Learning Machine Learning in 2024, Building ML Chops, and Brain Tumor Segmentation'
+summary: 'Building good foundations and doing something a little more interesting than classification.'
+date: '2024-03-20'
+layout: PostSimple
+tags: ['image-segmentation', 'journal-entry', 'healthcare']
+---
+
+<TOCInline toc={props.toc} asDisclosure toHeading={3} />
+
+## What I'm doing here
+  I'm a software engineer by trade, and honestly I've never been particularly _into_ machine learning. Whether that was the self-driving hype, or the GPT-3 hype, I always felt like things were overblown. But once I got to play with GPT-3.5-turbo and GPT-4 I (like many others) did a huge 180. Such a 180 that I realized that I'd like to spend time improving my machine learning fundamentals.
+
+  <Callout>
+  Specifically I'm looking to be able to hack on top of existing models and quickly prototype my ideas. 
+  </Callout>
+
+  That means I'd like to be able to pull state of the art open models off the shelf and put them to use. Better yet, have a knowledge of what's out there and how to compose them. A skill like this isn't something that's grown in a day or two, so I'm focusing on building my fundamentals and hacker chops over the coming months. 
+
+ ### My learning principles
+  Here's what I'm trying to keep top-of-mind for these coming two months.
+
+    ##### 1. Practical skills come only through practical experience
+     I have found through my own experience that, time-and-time again, those who are great builders are those who have spent the bulk of their time building.  and understand something (at least in the software space) are those who get their hands dirty. I can read articles and listen to podcasts all day, but only experimenting and building yourself provides high-signal information and grows your skills.
+
+    ##### 2. Three parts practice to one part theory
+     In college, multiple lecturers told us that we'd spend 3 hours outside of class for every hour in. While that may not have been true in practice, I found that felt about right as far as deriving value from the material I was working through, whether that meant reading text or working through problem sets.
+
+    ##### 3. A little bit every day
+     ...Yeah, we all know this by now. But I find it damn hard to follow (Kaiser, where's that ADHD eval you promised me!?). Regardless, I'm trying to follow through on this by tracking my hours spent each day over the next 8 weeks working on machine learning related projects and working my way through the beginner and advanced courses on [fast.ai](https://fast.ai).
+
+
+  ### Here's what I was focused on this week:
+    - **Getting comfortable with moving and prepping large amounts data for training.** This is a must and a meme for any software engineers who know about ML - 'your typical ML engineer spends 90% of their time preparing the data and 10% doing machine learning work'. Not exactly the most fun part, but since it's nothing new for me and that's where I can gain the most leverage by being comfortable.
+
+    - **Getting through the fast.ai material.** Being sent in the right direction, having some guidance as far as what is worth studying, being pointed in the direction of resources, etc. is a must for covering my bases. Want to move through this quickly (it's mostly review for me so far) but I want to don't want to miss details...
+
+    - **Working on a non-classification problem.** Every CS student and their mother has done classification tasks. There's so much more interesting stuff to do with models nowadays than building a standard 'this-or-that' classifier. I figured it would be interesting to work on an image segmentation task.
+
+    - **Learning to navigate and work effectively in jupyter notebooks** Workflow matters. For productivity's sake, but also for enjoyment and the sake of keeping work engaging. A craftsperson knows their tools, and for me that means I need to know some hotkeys, how to get data in and out of my tools, and other 'tricks of the trade' from working out of notebooks.
+
+    - **Learning to host models with replicate & cog.** As someone who's focused on being able to solve real problems, I _really_ care about deploying my models, and deploying them with minimal friction. I can do this with traditional software, but I have no idea how to quickly spin up a prototype when using a machine learning model. Time to get my hands dirty!
+
+## Where I found the data, how I decided on the problem
+  Tasked with working on a small project as part of the course, I wanted to just get working, but I also didn't want to just do a standard classification task as I'd done this half a dozen times in school 6 years ago. I poked around kaggle and defaulted to looking at data in the medical field, and found a dataset for image segmentation (which was new to me) and got cracking.
+
+## Moving step-by-step through the actual task
+  Unfortunately, I'm not going to fill this part of the project overview out. My time is better spent working on another project than trying to dig through the mess that was last week's project.
+  
+  Noted - keeping the notebook and my code clean makes it possible to reflect and write about the actual process of working with the data (the most interesting thing for readers). Let's see what it's like next week. 
+
+  1. My goal here was to just get _something_ running.
+  2. There were some other people who had trained models and had notebooks available
+  3. There was plenty of code, but very little documentation
+  4. The main challenge here was to take code that had been written with straight pytorch in mind and make it work with fastai library functions like dataloaders and learners.
+  5. I'm getting the feeling that the main steps of doing a project like this are as follows:
+  ```languages: text
+    1. Acquire the data.
+    2. Create data & label pairings from the data
+    3. Look at samples of the data, try to understand it
+    4. Train model
+    5. Evaluate model, maybe tweak + retrain
+    6. Deploy model
+  ```
+
+## Show off widget that executes my cloud model
+<BrainTumorSegmentationV1Widget />
+  ```languages: text
+  ### Widget spec
+  - Single button "Go"
+    - Picks a random image file from the validation set
+    - Makes a request to replicate API
+    - Displays the image w/ label overlaid on the left, w/ ground truth on the right flashing to indicate progress
+    - Displays a progress bar hardcoded to progress at a rate of 1 compl. per 65s
+    - Render text "Replicate cog instance loading..."
+    - Poll replicate every 5s, when response is found, download and render a mask applied image instead of the ground truth.
+  ```
+## Reflection: 
+  ### Process changes
+  ##### Care about evaluation metrics
+    In retrospect, I get how important it is to be able to tell if your model 'works' or not, working being subjective, but at a minimum it is whether its predictions are at least better than complete random. Funny enough I didn't consider this until I was nearing the end of the project. Fine for project 1!
+  ##### Write readable util functions, and keep them in a separate file
+    I was hacking really quickly to try and get this model trained and deployed in a day. Unsurprisingly, I got lost in the sauce, and the notebook quickly devolved into a messy state where I wasted an hour debugging what amounted to using the wrong variable name here or there. Write your data cleaning functions, your functions to render test data or chart metrics, and keep them organized in a separate file.
+  ##### Setup type inference
+    Speaking of getting lost in the sauce... generally I work in typescript, and it's easy the shape of the data at any point in the code due to type inference. Without this I was passing in wrong-sized tensors to my model, trying to render bad data, and more. The more unfamiliar I am with the libraries I'm using, the _more_ value I'll get from it being possible to inspect types as I'm working. 
+  ##### Save the model after each training run.
+    You don't want to lose the few hour long finetune you did just because you went to get lunch and the notebook shut down. It's also nice to have a series of your trained models so you can compare their performance with one another if need be. Until I was saving the model I kept getting up to do errands, and coming back and needing to wait another hour for the model to finetune. Just add the two or three lines of code to save and load the model if it exists already!!
+  ##### Write the blog post _as_ I do the work
+    I'm not sure if I'd want to read this blog post. I'm not sure that I'd really want to read my 'Learning Principles' nor my focuses for the week. It's necessary for journaling though 🤷‍♀️. I guess the blog post will need be iterated on as well.
+  ### Things to remember...
+  ##### Obfuscated error messages inside cog containers
+   While working on preparing my [cog](https://cog.run/) container for deployment to [replicate](https://replicate.com), I was passing bad data to my model (images of the wrong shape) and the error tracebacks I was seeing were coming from cog's http server, which obfuscated the real errors. I just need to do all of the real work **outside of the cog container**, and move things into the container when I'm getting errors. 
+  ##### Evaluation is everything
+   If you want to train a good model, and know if the tweaks you've made improved the model, you obviously can't know unless you are properly evaluating your model. With classification tasks its very clear how to evaluate the model - accuracy, recall, and precision metrics are core and are metrics even a beginner like me can understand. But different categories of tasks and different domains will require different evaluation metrics. 
+   
+   Pixel-by-pixel accuracies, DICE and IoU are all valid metrics, but in the brain tumor case where the set of positive pixels is easily 10x less than the set of negative pixels, the pixel-by-pixel accuracy metric will result in me building a model that prefers false negatives. In the brain tumor case we would _much rather_ have our model think it's seeing a brain tumor when its not, so pixel-by-pixel accuracy is absolutely the wrong metric to use here.
+
+   There are alternative evaluation metrics - DICE and IoU - that improve upon this. I didn't tweak the evaluation metrics at all here; I just wanted to get the model trained and executing. See my blog post [here](https://ml.lucasdellabella.com/some-other-blog-post) where I use these different evaluation metrics and build an intuition with each one.
+
+---
+
+<div className="w-32">![no-ai-used-badge](https://cdn.markpitblado.me/no-ai-used.png)</div>

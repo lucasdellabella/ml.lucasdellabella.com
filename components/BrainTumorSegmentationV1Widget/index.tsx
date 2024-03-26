@@ -4,6 +4,7 @@ import http from '@/lib/http'
 import axios from 'axios'
 import replicate from '@/lib/replicate'
 import sharp from 'sharp'
+import Jimp from 'jimp'
 
 const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -38,18 +39,19 @@ async function createPrediction(imagePath: string) {
   return output
 }
 
-async function readImageData(filePath: string) {
+async function readImageData(filePath) {
   'use server'
 
   try {
-    const imageRequest = await axios.get(filePath, { responseType: 'arraybuffer' })
-    console.log(imageRequest.data)
-    const image = sharp(imageRequest.data)
-
-    const imageData = await image.threshold().png().toBuffer() // Convert the image to PNG format and get the buffer
-    const dataUrl = `data:image/png;base64,${imageData.toString('base64')}` // Convert the buffer to a Data URL
-
-    return dataUrl
+    const response = await axios.get(filePath, { responseType: 'arraybuffer' })
+    const image = await Jimp.read(response.data)
+    return await image
+      .quality(60) // Set image quality
+      .getBufferAsync(Jimp.MIME_PNG) // Convert to PNG
+      .then((pngBuffer) => {
+        const dataUrl = `data:image/png;base64,${pngBuffer.toString('base64')}`
+        return dataUrl
+      })
   } catch (error) {
     console.error('Error reading image data:', error)
     throw new Error(error)

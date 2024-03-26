@@ -38,7 +38,7 @@ async function createPrediction(imagePath: string) {
   return output
 }
 
-async function readImageData(filePath) {
+async function readImageData(filePath: string) {
   'use server'
 
   try {
@@ -52,6 +52,7 @@ async function readImageData(filePath) {
     return dataUrl
   } catch (error) {
     console.error('Error reading image data:', error)
+    throw new Error(error)
   }
 }
 

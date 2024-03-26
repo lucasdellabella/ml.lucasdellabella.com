@@ -93,7 +93,7 @@ const BrainTumorSegmentationV1Widget = ({
 }: {
   imagePaths: Array<string>
   createPrediction: (imagePath: string) => Promise<string>
-  readImageData: (filePath: string) => string
+  readImageData: (filePath: string) => Promise<string>
 }) => {
   const [currentImagePath, setCurrentImagePath] = useState('')
   const [progressValue, setProgressValue] = useState(0)

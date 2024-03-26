@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -8,13 +8,92 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 
 import Image from 'next/image'
+import { drawImageWithAnnotation, getAnnotationByFileName } from './readAnnotations'
+import { cn } from '@/lib/utils'
+
+type WidgetLayoutProps = {
+  left: ReactNode
+  right: ReactNode
+  loading: boolean
+  currentImagePath: string
+  createPredictionForCurrentImage: () => void
+  progressValue: number
+  hidden: boolean
+}
+
+const WidgetLayout = ({
+  left,
+  right,
+  loading,
+  currentImagePath,
+  createPredictionForCurrentImage,
+  progressValue,
+  hidden = false,
+}: WidgetLayoutProps) => {
+  return (
+    <>
+      <div
+        className={cn(
+          'flex-grow w-full h-full mr-2 flex justify-center items-center rounded-lg border bg-black border-slate-700',
+          hidden ? 'hidden' : ''
+        )}
+      >
+        <div className="relative flex flex-col justify-center items-center w-full h-full">
+          <div className="relative flex-grow w-full h-full flex justify-center items-center">
+            {left}
+          </div>
+          <div className="py-2">
+            <span className="italic">Brain tumor ground truth</span>
+          </div>
+          <Button
+            variant="default"
+            size="lg"
+            disabled={!currentImagePath || loading}
+            onClick={async () => {
+              // resetState()
+              createPredictionForCurrentImage()
+            }}
+            className="absolute -bottom-2 translate-y-full"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Warming replicate container & making request...
+              </>
+            ) : (
+              'Go'
+            )}
+          </Button>
+        </div>
+      </div>
+      <div
+        className={cn(
+          'flex-grow w-full h-full flex justify-center items-center rounded-lg border bg-black border-slate-700',
+          hidden ? 'hidden' : ''
+        )}
+      >
+        <div className="relative flex flex-col justify-center items-center w-full h-full">
+          <div className="flex-grow w-full h-full flex justify-center items-center">
+            {right}
+            <Progress className="absolute -bottom-6" value={progressValue} />
+          </div>
+          <div className="py-2">
+            <span className="italic">Brain tumor prediction</span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
 
 const BrainTumorSegmentationV1Widget = ({
   imagePaths,
   createPrediction,
+  readImageData,
 }: {
   imagePaths: Array<string>
   createPrediction: (imagePath: string) => Promise<string>
+  readImageData: (filePath: string) => string
 }) => {
   const [currentImagePath, setCurrentImagePath] = useState('')
   const [progressValue, setProgressValue] = useState(0)
@@ -23,13 +102,34 @@ const BrainTumorSegmentationV1Widget = ({
   const [error, setError] = useState(null)
   const [data, setData] = useState('')
 
-  const selectNewImage = (imagePath: string) => {
+  const isSelectImageStep = currentImagePath === ''
+  const isReadyToQueryStep = currentImagePath !== '' && data === ''
+  const isQueryCompleteStep = currentImagePath !== '' && data !== ''
+
+  const resetState = () => {
     setLoading(false)
     setError(null)
     setData('')
-    setProgressValue(0)
+    setProgressValue(-1)
+  }
+
+  const canvas = (
+    <canvas
+      id="image-canvas"
+      className="absolute w-[200px] h-[200px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+    />
+  )
+
+  const selectNewImage = (imagePath: string) => {
+    resetState()
     setCurrentImagePath(imagePath)
   }
+
+  useEffect(() => {
+    const result = getAnnotationByFileName(currentImagePath.split('/').findLast((x) => x)!)!
+    drawImageWithAnnotation('image-canvas-1', currentImagePath, result)
+    drawImageWithAnnotation('image-canvas-2', currentImagePath, result)
+  }, [currentImagePath, data, isQueryCompleteStep])
 
   const createPredictionForCurrentImage = async () => {
     try {
@@ -43,7 +143,7 @@ const BrainTumorSegmentationV1Widget = ({
       }, 600)
       const result = await createPrediction(currentImagePath)
       clearInterval(intervalId)
-      setData(result)
+      setData(await readImageData(result))
       setProgressValue(100)
       console.log(JSON.stringify(result))
     } catch (err) {
@@ -53,106 +153,9 @@ const BrainTumorSegmentationV1Widget = ({
     }
   }
 
-  const renderSelectedImages = () => {
-    if (currentImagePath === '') {
-      return (
-        <>
-          <div className="flex-grow w-full h-full flex justify-center items-center rounded-lg border border-slate-700">
-            <div className="flex flex-col justify-center items-center w-full h-full">
-              <div className="relative flex-grow w-full h-full flex justify-center items-center">
-                <div className="opacity-50">Image Placeholder</div>
-              </div>
-              <div className="py-2">
-                <span className="italic">Brain tumor ground truth</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex-grow w-full h-full flex justify-center items-center rounded-lg border border-slate-700">
-            <div className="flex flex-col justify-center items-center w-full h-full">
-              <div className="relative flex-grow w-full h-full flex justify-center items-center">
-                <div className="opacity-50">Image Placeholder</div>
-              </div>
-              <div className="py-2">
-                <span className="italic">Brain tumor prediction</span>
-              </div>
-            </div>
-          </div>
-        </>
-      )
-    } else if (data === '') {
-      return (
-        <>
-          <div className="flex-grow w-full h-full flex-col justify-center items-center rounded-lg bg-black border border-slate-700">
-            <div className="flex flex-col justify-center items-center w-full h-full">
-              <div className="relative flex-grow w-full h-full">
-                <Image
-                  src={currentImagePath}
-                  alt={`Selected image`}
-                  layout="fill"
-                  objectFit="contain"
-                  className="m-0 flex-grow"
-                />
-              </div>
-              <div className="py-2">
-                <span className="italic">Brain tumor ground truth</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex-grow w-full h-full flex justify-center items-center rounded-lg border border-slate-700">
-            <div className="flex flex-col justify-center items-center w-full h-full">
-              <div className="relative flex-grow w-full h-full flex justify-center items-center">
-                <div className="opacity-50">Image Placeholder</div>
-              </div>
-              <div className="py-2">
-                <span className="italic">Brain tumor prediction</span>
-              </div>
-            </div>
-          </div>
-        </>
-      )
-    } else {
-      return (
-        <>
-          <div className="flex-grow w-full h-full flex-col justify-center items-center rounded-lg bg-black border border-slate-700">
-            <div className="flex flex-col justify-center items-center w-full h-full">
-              <div className="relative flex-grow w-full h-full">
-                <Image
-                  src={currentImagePath}
-                  alt={`Selected image`}
-                  layout="fill"
-                  objectFit="contain"
-                  className="m-0 flex-grow"
-                />
-              </div>
-              <div className="py-2">
-                <span className="italic">Brain tumor ground truth</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex-grow w-full h-full flex justify-center items-center rounded-lg border border-slate-700">
-            <div className="flex flex-col justify-center items-center w-full h-full">
-              <div className="relative flex-grow w-full h-full">
-                <Image
-                  src={data}
-                  alt={`Predicted image`}
-                  layout="fill"
-                  objectFit="contain"
-                  className="m-0 flex-grow"
-                />
-              </div>
-              <div className="py-2">
-                <span className="italic">Brain tumor prediction</span>
-              </div>
-            </div>
-          </div>
-        </>
-      )
-    }
-  }
-
   return (
     <Card className="items-center justify-center">
-      <CardContent className="flex-col justify-center items-center p-6">
+      <CardContent className="flex-col justify-center items-center p-6 pb-10">
         <div className="pb-1">Pick an image from our validation set:</div>
         <div className="flex w-full flex-wrap justify-between">
           {imagePaths.map((path, index) => (
@@ -162,6 +165,7 @@ const BrainTumorSegmentationV1Widget = ({
               size="custom"
               onClick={() => selectNewImage(path)}
               className="relative p-6 rounded-lg border overflow-clip border-slate-700 bg-black hover:bg-black hover:opacity-75 px-4 py-2"
+              disabled={loading}
             >
               <div className="relative h-14 w-14">
                 <Image
@@ -175,28 +179,61 @@ const BrainTumorSegmentationV1Widget = ({
             </Button>
           ))}
         </div>
-        <hr className="my-4"></hr>
-        <div className="flex justify-center items-center w-full h-80 py-8 space-x-2">
-          {renderSelectedImages()}
-        </div>
-        <hr className="my-4"></hr>
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="default"
-            size="lg"
-            disabled={!currentImagePath || loading}
-            onClick={async () => createPredictionForCurrentImage()}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Warming replicate container & making request...
-              </>
-            ) : (
-              'Go'
-            )}
-          </Button>
-          <Progress value={progressValue} />
+        <div className="flex justify-center items-center w-full h-80 py-8">
+          <WidgetLayout
+            left={<div className="opacity-50">Image Placeholder</div>}
+            right={<div className="opacity-50">Image Placeholder</div>}
+            loading={loading}
+            currentImagePath={currentImagePath}
+            createPredictionForCurrentImage={createPredictionForCurrentImage}
+            progressValue={progressValue}
+            hidden={!isSelectImageStep}
+          />
+          <WidgetLayout
+            left={
+              <canvas
+                id="image-canvas-1"
+                className="absolute w-[200px] h-[200px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+              />
+            }
+            right={<div className="opacity-50">Image Placeholder</div>}
+            loading={loading}
+            currentImagePath={currentImagePath}
+            createPredictionForCurrentImage={createPredictionForCurrentImage}
+            progressValue={progressValue}
+            hidden={!isReadyToQueryStep}
+          />
+          <WidgetLayout
+            left={
+              <canvas
+                id="image-canvas-2"
+                className="absolute w-[200px] h-[200px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+              />
+            }
+            right={
+              <div className="relative w-full h-full">
+                <Image
+                  src={currentImagePath}
+                  alt={`Predicted image`}
+                  layout="fill"
+                  objectFit="contain"
+                  className="m-0 flex-grow"
+                />
+                <Image
+                  src={data}
+                  alt={`Predicted image`}
+                  layout="fill"
+                  objectFit="contain"
+                  className="opacity-50 m-0 flex-grow"
+                />
+              </div>
+            }
+            loading={loading}
+            currentImagePath={currentImagePath}
+            createPredictionForCurrentImage={createPredictionForCurrentImage}
+            progressValue={progressValue}
+            hidden={!isQueryCompleteStep}
+          />
         </div>
       </CardContent>
     </Card>

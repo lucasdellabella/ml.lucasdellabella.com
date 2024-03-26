@@ -3,6 +3,7 @@ import BrainTumorSegmentationV1Widget from './BrainTumorSegmentationV1Widget'
 import http from '@/lib/http'
 import axios from 'axios'
 import replicate from '@/lib/replicate'
+import sharp from 'sharp'
 
 const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -37,9 +38,30 @@ async function createPrediction(imagePath: string) {
   return output
 }
 
+async function readImageData(filePath) {
+  'use server'
+
+  try {
+    const imageRequest = await axios.get(filePath, { responseType: 'arraybuffer' })
+    console.log(imageRequest.data)
+    const image = sharp(imageRequest.data)
+
+    const imageData = await image.threshold().png().toBuffer() // Convert the image to PNG format and get the buffer
+    const dataUrl = `data:image/png;base64,${imageData.toString('base64')}` // Convert the buffer to a Data URL
+
+    return dataUrl
+  } catch (error) {
+    console.error('Error reading image data:', error)
+  }
+}
+
 const Component = async ({ imagePaths }: { imagePaths: Array<string> }) => {
   return (
-    <BrainTumorSegmentationV1Widget imagePaths={imagePaths} createPrediction={createPrediction} />
+    <BrainTumorSegmentationV1Widget
+      imagePaths={imagePaths}
+      createPrediction={createPrediction}
+      readImageData={readImageData}
+    />
   )
 }
 

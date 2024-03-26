@@ -8,14 +8,10 @@ import Jimp from 'jimp'
 const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms))
 
 async function toDataURL(url) {
-  try {
-    const response = await http.get(url, { responseType: 'arraybuffer' })
-    const base64 = Buffer.from(response.data).toString('base64')
-    const dataUrl = `data:image/jpg;base64,${base64}`
-    return dataUrl
-  } catch (error) {
-    console.error('Error:', error)
-  }
+  const response = await http.get(url, { responseType: 'arraybuffer' })
+  const base64 = Buffer.from(response.data).toString('base64')
+  const dataUrl = `data:image/jpg;base64,${base64}`
+  return dataUrl
 }
 
 const apiToken = 'r8_KUYJRg6oppvzTBq5pj1V7FmloxJTtFt2L4VPm'

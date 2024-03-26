@@ -24,7 +24,7 @@ async function createPrediction(imagePath: string) {
 
   console.log('STARTING CREATION')
   const dataUrl = await toDataURL(imagePath)
-  const output = await replicate.run(
+  const output = (await replicate.run(
     'lucasdellabella/brain-tumor-segmenter-v1:56c23936708f4a587f395dd35ea1d6f34ee6f84a94265abaaf2dd9bf19d8632c',
     {
       input: {
@@ -32,28 +32,14 @@ async function createPrediction(imagePath: string) {
         scale: 1.5,
       },
     }
-  )
+  )) as unknown as string
 
   return output
 }
 
-async function fetchPrediction(predictionId: string) {
-  'use server'
-
-  await sleep(1000)
-
-  await fetch(`https://api.replicate.com/v1/predictions/${predictionId}`)
-  console.log('RUNNING RSC FN')
-  return 'TEST PREDICTION'
-}
-
 const Component = async ({ imagePaths }: { imagePaths: Array<string> }) => {
   return (
-    <BrainTumorSegmentationV1Widget
-      imagePaths={imagePaths}
-      createPrediction={createPrediction}
-      fetchPrediction={fetchPrediction}
-    />
+    <BrainTumorSegmentationV1Widget imagePaths={imagePaths} createPrediction={createPrediction} />
   )
 }
 

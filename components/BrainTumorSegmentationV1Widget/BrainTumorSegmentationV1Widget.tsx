@@ -12,11 +12,9 @@ import Image from 'next/image'
 const BrainTumorSegmentationV1Widget = ({
   imagePaths,
   createPrediction,
-  fetchPrediction,
 }: {
   imagePaths: Array<string>
   createPrediction: (imagePath: string) => Promise<string>
-  fetchPrediction: (predictionId: string) => Promise<string>
 }) => {
   const [currentImagePath, setCurrentImagePath] = useState('')
   const [progressValue, setProgressValue] = useState(0)

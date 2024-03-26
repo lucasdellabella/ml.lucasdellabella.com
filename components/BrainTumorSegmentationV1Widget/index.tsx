@@ -3,7 +3,6 @@ import BrainTumorSegmentationV1Widget from './BrainTumorSegmentationV1Widget'
 import http from '@/lib/http'
 import axios from 'axios'
 import replicate from '@/lib/replicate'
-import sharp from 'sharp'
 import Jimp from 'jimp'
 
 const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms))

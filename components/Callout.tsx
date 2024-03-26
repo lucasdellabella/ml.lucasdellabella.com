@@ -44,7 +44,7 @@ const Callout: React.FC<CalloutProps> = ({ type = 'info', title, children }) => 
               <div className="mt-2 text-sm text-gray-300">{children}</div>
             </>
           ) : (
-            <div className="text-sm prose text-slate-50">{children}</div>
+            <div className="text-sm prose max-w-none text-slate-50">{children}</div>
           )}
         </div>
       </div>

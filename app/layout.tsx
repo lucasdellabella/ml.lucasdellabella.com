@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import siteMetadata from 'data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
+import { QueryClient } from '@tanstack/react-query'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -47,6 +48,8 @@ export const metadata: Metadata = {
     images: [siteMetadata.socialBanner],
   },
 }
+
+const queryClient = new QueryClient()
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

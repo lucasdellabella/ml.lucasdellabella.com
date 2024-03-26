@@ -66,7 +66,7 @@ module.exports = () => {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
     images: {
-      domains: ['cdn.markpitblado.me'],
+      domains: ['cdn.markpitblado.me', 'replicate.delivery'],
     },
     async headers() {
       return [

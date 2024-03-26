@@ -23,16 +23,18 @@ const apiToken = 'r8_KUYJRg6oppvzTBq5pj1V7FmloxJTtFt2L4VPm'
 async function createPrediction(imagePath: string) {
   'use server'
 
-  console.log('STARTING CREATION')
+  console.info('STARTING CREATION')
   const dataUrl = await toDataURL(imagePath)
+  const body = {
+    input: {
+      image: dataUrl,
+      scale: 1.5,
+    },
+  }
+  console.info(JSON.stringify(body))
   const output = (await replicate.run(
     'lucasdellabella/brain-tumor-segmenter-v1:56c23936708f4a587f395dd35ea1d6f34ee6f84a94265abaaf2dd9bf19d8632c',
-    {
-      input: {
-        image: dataUrl,
-        scale: 1.5,
-      },
-    }
+    body
   )) as unknown as string
 
   return output
